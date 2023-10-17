@@ -1,0 +1,21 @@
+// MapGroup organizes groups of endpoints under "people" 
+var group = app.MapGroup("/people");
+
+group.MapGet("/", async (PersonContext db) =>
+{
+    return await db.Person.ToListAsync();
+});
+
+group.MapGet("/{id}", async (int id, PersonContext db) =>
+{
+    return await db.Person.FindAsync(id);
+});
+
+group.MapPost("/create", async (Person person, PersonContext db) =>
+{
+    db.Person.Add(person);
+    await db.SaveChangesAsync();
+    return Results.Created($"/people/{person.Id}", person);
+});
+
+app.Run();
